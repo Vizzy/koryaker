@@ -27,28 +27,22 @@ with open(dataset_cyr) as cyr_data:
 with open(dataset_lat) as lat_data:
     words_lat = lat_data.read().splitlines()
 
-def tokenise(word, alphabet):
-    '''this function tokenises a word based on an alphabet'''
+def tokenise(string, alphabet):
+    '''this function tokenises a string based on an alphabet'''
 
-    single_char_tokens = tuple(filter(lambda t: len(t) is 1, alphabet))
-    multichar_tokens = tuple(filter(lambda t: len(t) > 1, alphabet))
     tokenised = []
 
-    while word != '':
-        c = word[0]
-        if len(word) is 1:
-            if c in single_char_tokens:    
-                tokenised.append(c)
-            break
-        else:
-            next = word[1]
-            if (c + next) in multichar_tokens:
-                tokenised.append(c + next)
-                word = word[2:]
-                continue
-            elif c in single_char_tokens:
-                tokenised.append(c)
-            word = word[1:]
+    while string != '':
+        copystring = string
+        while copystring != '':
+            if copystring in alphabet:
+                tokenised.append(copystring)
+                string = string[len(copystring):]
+                break
+            else:
+                if len(copystring) == 1:
+                    string = string[1:]
+            copystring = copystring[:len(copystring) - 1]
 
     return tokenised
 
