@@ -34,6 +34,10 @@ def tokenise(string, alphabet):
 
     while string != '':
         copystring = string
+
+        '''loop in reverse, 
+        comparing the beginning of the string to the alphabet'''
+
         while copystring != '':
             if copystring in alphabet:
                 tokenised.append(copystring)
