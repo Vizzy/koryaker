@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.4
 
+import re
 from collections import namedtuple
 import simplejson as json
 
@@ -27,28 +28,19 @@ with open(dataset_cyr) as cyr_data:
 with open(dataset_lat) as lat_data:
     words_lat = lat_data.read().splitlines()
 
-def tokenise(string, alphabet):
+def tokenise_one(string, alphabet):
     '''this function tokenises a string based on an alphabet'''
 
-    tokenised = []
+    ordered_alphabet = sorted(alphabet, key=len, reverse=True)
+    alphabet_pattern = re.compile('|'.join(ordered_alphabet))
 
-    while string != '':
-        copystring = string
+    return re.findall(alphabet_pattern, string)
 
-        '''loop in reverse, 
-        comparing the beginning of the string to the alphabet'''
-
-        while copystring != '':
-            if copystring in alphabet:
-                tokenised.append(copystring)
-                string = string[len(copystring):]
-                break
-            else:
-                if len(copystring) == 1:
-                    string = string[1:]
-            copystring = copystring[:len(copystring) - 1]
-
-    return tokenised
+def tokenise_many(words, alphabet):
+    ordered_alphabet = sorted(alphabet, key=len, reverse=True)
+    alphabet_pattern = re.compile('|'.join(ordered_alphabet))
+    tokenised_words = (re.findall(alphabet_pattern, w) for w in words)
+    return tokenised_words
 
 def sort_words(words, alphabet):
     '''this function converts each word into its ordinal representation
@@ -58,7 +50,7 @@ def sort_words(words, alphabet):
     then converts them back into alphabetic representations'''
 
     letter_orders = {l: n for n, l in enumerate(alphabet)}
-    tokenised_words = [tokenise(w, alphabet) for w in words]
+    tokenised_words = tokenise_many(words, alphabet)
     words_as_orders = []
 
     for w in tokenised_words:
@@ -84,7 +76,7 @@ def create_sorted_dictionary(words, alphabet):
     with open('sorted_words.txt', 'w') as sorted_words_file:
         sorted_words_file.write(sorted_words)
 
-    return True, len(sorted_words)
+    return True, len(words)
 
     print('wrote {} entries'.format(len(sorted_words)))
 
